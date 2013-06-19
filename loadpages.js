@@ -5,7 +5,7 @@ var fs = require('fs'),
 
 function loadAddresses() {
     var websites = [];
-    console.log("Loading websites...");
+    // console.log("Loading websites...");
     var content;
     var website_file;
     try {
@@ -31,7 +31,7 @@ function loadPages(urls) {
     urlIndex = 0;
     webpage = require("webpage");
     page = null;
-
+    var sites = [];
     // next = function(status, url, startTime) {
     //     page.close();
     //     return retrieve();
@@ -56,7 +56,7 @@ function loadPages(urls) {
                 height: 480
             };
             var startTime = Date.now();
-            console.log("Loading " + url);
+            // console.log("Loading " + url);
             
             return page.open(url, function(status) {
                 
@@ -65,7 +65,11 @@ function loadPages(urls) {
                         // var endTime = Date.now() - startTime;
                         page.endTime = new Date();
                         var endTime = page.endTime - page.startTime
-                        console.log("Load time for " + url + " is " + endTime + " msec");
+                        sites.push({
+                            url: url,
+                            time: (endTime / 1000)
+                        })
+                        // console.log("Load time for " + url + " is " + endTime + " msec");
                         return retrieve();
                     }), 200);
                 } else {
@@ -74,6 +78,7 @@ function loadPages(urls) {
                 }
             });
         } else {
+            console.log(JSON.stringify(sites));
             phantom.exit();
         }
     };
@@ -81,32 +86,6 @@ function loadPages(urls) {
 }
 
 
-function printPageTime(address, callback) {
-    var t = Date.now();
-    var page = webpage.create();
-    console.log("Loading " + address + "...");
-
-        page.onResourceRequested = function (req) {
-            // console.log('requested: ' + JSON.stringify(req, undefined, 4));
-        };
-
-        page.onResourceReceived = function (res) {
-            // console.log('received: ' + JSON.stringify(res, undefined, 4));
-        };
-
-        page.open(address, function (status) {
-            console.log("PAGE LOADED");
-            if (status !== 'success') {
-                console.log('FAIL to load the address:' + address);
-            } else {
-                t = Date.now() - t;
-                console.log('Loading time ' + t/1000 + 's');
-            }
-           
-        });
-
-}
 //public void static main() ;)
-
 var urls = loadAddresses();
 loadPages(urls);

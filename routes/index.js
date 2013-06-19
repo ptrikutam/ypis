@@ -4,7 +4,17 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Your Page Is Slow' });
+  
+  var childProcess = require('child_process');
+
+	// executes `pwd`
+	child = childProcess.exec("phantomjs loadpages.js", function (error, stdout, stderr) {
+	  var sites = JSON.parse(stdout);
+	  res.render('index', { title: 'Your Page Is Slow', sites:  sites});
+	  if (error !== null) {
+	    console.log('exec error: ' + error);
+	  }
+	});
 };
 
 
@@ -20,7 +30,7 @@ exports.newdata = function(req,res) {
 	    console.log('exec error: ' + error);
 	  }
 	});
-	console.log("END OF NEWDATA");
+	
 }
 
 // http://nodejs.org/api.html#_child_processes
